@@ -11,6 +11,8 @@ You can install the latest build of this image by running `docker pull jrottenbe
 
 This image can be used as a base for an encoding farm.
 
+This version adds the pHash library to the mix allowing building apps using phash and all the goodness of full ffmpeg support.
+
 Ubuntu builds
 --------------
 
