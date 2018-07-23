@@ -4,7 +4,7 @@
 #
 #
 
-FROM        alpine:3.5 AS base
+FROM        alpine:3.8 AS base
 
 RUN     apk  add --no-cache --update libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 libgomp expat
 
@@ -63,9 +63,13 @@ RUN     buildDeps="autoconf \
                    file \
                    g++ \
                    gcc \
+                   git \
                    gperf \
                    libtool \
+                   libsamplerate-dev \
+                   libsndfile-dev \
                    make \
+                   mpg123-dev \
                    python \
                    openssl-dev \
                    tar \
@@ -351,6 +355,22 @@ RUN  \
         cd tools && \
         make qt-faststart && \
         cp qt-faststart ${PREFIX}/bin
+
+
+RUN \
+        dir=/tmp/pHash && \
+        mkdir -p ${dir} && \
+        cd ${dir} && \
+        git clone https://github.com/faisyl/pHash-mirror.git&& \
+        cd ./pHash-mirror && \
+        cp CImg.h /opt/ffmpeg/include &&\
+        export LD_LIBRARY_PATH=/opt/ffmpeg/lib && \
+        aclocal && libtoolize --force && autoreconf -fiv && automake --add-missing && \
+        ./configure --prefix=/usr/local CFLAGS=-I/opt/ffmpeg/include \
+        	CXXFLAGS=-I/opt/ffmpeg/include LDFLAGS=-L/opt/ffmpeg/lib && \
+        make  && \
+        make install  && \
+        rm -rf ${dir}
 
 RUN \
     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \

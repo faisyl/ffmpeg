@@ -4,7 +4,7 @@
 #
 #
 
-FROM        alpine:3.5 AS base
+FROM        alpine:3.8 AS base
 
 RUN     apk  add --no-cache --update libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 libgomp expat
 
@@ -32,9 +32,13 @@ RUN     buildDeps="autoconf \
                    file \
                    g++ \
                    gcc \
+                   git \
                    gperf \
                    libtool \
+                   libsamplerate-dev \
+                   libsndfile-dev \
                    make \
+                   mpg123-dev \
                    python \
                    openssl-dev \
                    tar \
@@ -43,6 +47,8 @@ RUN     buildDeps="autoconf \
                    expat-dev" && \
         apk  add --no-cache --update ${buildDeps}
 %%RUN%%
+
+%%PHASH%%
 
 RUN \
     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \

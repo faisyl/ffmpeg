@@ -58,9 +58,14 @@ for version in keep_version:
             template = tmpfile.read()
         with open('templates/Dockerfile-run', 'r') as tmpfile:
             run_content = tmpfile.read()
+        with open('templates/Dockerfile-phash', 'r') as tmpfile:
+            phash_content = tmpfile.read()
         env_content = env_content.replace('%%FFMPEG_VERSION%%', version)
         docker_content = template.replace('%%ENV%%', env_content)
         docker_content = docker_content.replace('%%RUN%%', run_content)
+        if variant != 'alpine' and version != '4.0':
+            phash_content = ""
+        docker_content = docker_content.replace('%%PHASH%%', phash_content)
         # OpenJpeg 2.1 is not supported in 2.8
         if version[0:3] == '2.8':
             docker_content = docker_content.replace('--enable-libopenjpeg', '')
